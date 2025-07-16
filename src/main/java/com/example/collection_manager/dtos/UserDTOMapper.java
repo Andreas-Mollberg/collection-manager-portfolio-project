@@ -2,7 +2,6 @@ package com.example.collection_manager.dtos;
 
 import com.example.collection_manager.models.User;
 import org.springframework.stereotype.Component;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,12 +25,17 @@ public class UserDTOMapper {
                                                 c.getItems().stream()
                                                         .map(itemDTOMapper::toDTO)
                                                         .collect(Collectors.toList()),
+                                        c.getTags() == null ? List.of() :
+                                                c.getTags().stream()
+                                                        .map(tag -> new TagDTO(tag.getId(), tag.getTagName()))
+                                                        .collect(Collectors.toList()),
                                         c.getVisibility()
                                 ))
                                 .collect(Collectors.toList());
 
         return new UserDTO(user.getId(), user.getUserName(), collectionDTOs);
     }
+
 
 }
 

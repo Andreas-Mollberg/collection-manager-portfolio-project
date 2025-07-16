@@ -12,16 +12,23 @@ public class CollectionDTOMapper {
     @Autowired
     private ItemDTOMapper itemDTOMapper;
 
+    @Autowired
+    private TagDTOMapper tagDTOMapper;
+
     public CollectionDTO toDTO(Collection collection) {
         List<ItemDTO> items = collection.getItems() == null ? List.of() :
                 collection.getItems().stream()
                         .map(itemDTOMapper::toDTO)
                         .toList();
 
+        List<TagDTO> tags = collection.getTags() == null ? List.of() :
+                collection.getTags().stream().map(tagDTOMapper::toDTO).toList();
+
         return new CollectionDTO(
                 collection.getId(),
                 collection.getCollectionTitle(),
                 items,
+                tags,
                 collection.getVisibility()
         );
     }

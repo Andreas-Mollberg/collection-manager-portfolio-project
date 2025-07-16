@@ -2,6 +2,7 @@ package com.example.collection_manager.controllers;
 
 import com.example.collection_manager.dtos.CollectionDTO;
 import com.example.collection_manager.dtos.CollectionDTOMapper;
+import com.example.collection_manager.dtos.CreateCollectionDTO;
 import com.example.collection_manager.models.Collection;
 import com.example.collection_manager.services.CollectionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +26,12 @@ public class CollectionController {
     @PostMapping
     public ResponseEntity<CollectionDTO> createCollection(
             @PathVariable Long userId,
-            @RequestBody Collection collection) {
-        return collectionService.createCollectionForUser(userId, collection)
+            @RequestBody CreateCollectionDTO dto) {
+        return collectionService.createCollectionForUser(userId, dto)
                 .map(saved -> ResponseEntity.ok(collectionDTOMapper.toDTO(saved)))
                 .orElse(ResponseEntity.notFound().build());
     }
+
 
     @GetMapping
     public List<CollectionDTO> getCollections(@PathVariable Long userId) {
@@ -68,6 +70,16 @@ public class CollectionController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
         }
+    }
+
+    @GetMapping("/public")
+    public List<CollectionDTO> getPublicCollections(
+            @PathVariable Long userId
+    ) {
+        return collectionService.getPublicCollectionsByUserId(userId)
+                .stream()
+                .map(collectionDTOMapper::toDTO)
+                .toList();
     }
 
 

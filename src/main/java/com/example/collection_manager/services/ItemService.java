@@ -2,6 +2,7 @@ package com.example.collection_manager.services;
 
 import com.example.collection_manager.dtos.ItemDTO;
 import com.example.collection_manager.dtos.ItemDTOMapper;
+import com.example.collection_manager.dtos.UpdateItemDTO;
 import com.example.collection_manager.models.Collection;
 import com.example.collection_manager.models.Item;
 import com.example.collection_manager.models.Tag;
@@ -44,12 +45,20 @@ public class ItemService {
                 .collect(Collectors.toList());
     }
 
-    public void updateItem(Item item) {
-        itemRepository.save(item);
-    }
+    public Optional<Item> updateItem(Long itemId, UpdateItemDTO dto) {
+        Optional<Item> itemOpt = itemRepository.findById(itemId);
+        if (itemOpt.isEmpty()) return Optional.empty();
 
-    public void deleteItem(Long id) {
-        itemRepository.deleteById(id);
+        Item item = itemOpt.get();
+        if (dto.itemName() != null) item.setItemName(dto.itemName());
+        if (dto.description() != null) item.setDescription(dto.description());
+        if (dto.tags() != null) {
+            List<Tag> tags = resolveTags(new HashSet<>(dto.tags()));
+            item.setTags(tags);
+        }
+
+
+        return Optional.of(itemRepository.save(item));
     }
 
     public Optional<Item> addItemToCollection(Long userId, Long collectionId, Item item, List<String> tagNames) {
@@ -70,18 +79,16 @@ public class ItemService {
     }
 
     private List<Tag> resolveTags(Set<String> tagNames) {
-        // Normalize: lowercase & trim
         List<String> normalized = tagNames.stream()
                 .map(name -> name.trim().toLowerCase())
                 .distinct()
                 .toList();
 
-        // Fetch existing tags in bulk
         List<Tag> existingTags = tagRepository.findAllByTagNameInIgnoreCase(normalized);
 
         Map<String, Tag> existingTagMap = existingTags.stream()
                 .collect(Collectors.toMap(
-                        tag -> tag.getTagName().toLowerCase(), // key by lowercase
+                        tag -> tag.getTagName().toLowerCase(),
                         tag -> tag
                 ));
 
@@ -91,16 +98,14 @@ public class ItemService {
             if (existingTagMap.containsKey(name)) {
                 resolvedTags.add(existingTagMap.get(name));
             } else {
-                Tag newTag = new Tag(name); // already lowercase
-                tagRepository.save(newTag); // persist immediately
+                Tag newTag = new Tag(name);
+                tagRepository.save(newTag);
                 resolvedTags.add(newTag);
             }
         }
 
         return resolvedTags;
     }
-
-
 
     public List<Item> findItemsByCollectionId(Long collectionId) {
         return itemRepository.findByCollectionId(collectionId);
