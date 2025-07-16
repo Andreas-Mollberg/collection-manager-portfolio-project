@@ -30,10 +30,17 @@ public class ItemController {
         item.setItemName(createItemDTO.itemName());
         item.setDescription(createItemDTO.description());
 
-        return itemService.addItemToCollection(userId, collectionId, item, createItemDTO.tags())
+        return itemService.addItemToCollection(
+                        userId,
+                        collectionId,
+                        item,
+                        createItemDTO.tags(),
+                        createItemDTO.imageIds()
+                )
                 .map(savedItem -> ResponseEntity.ok(itemDTOMapper.toDTO(savedItem)))
                 .orElse(ResponseEntity.notFound().build());
     }
+
 
     @GetMapping("/{itemId}")
     public ResponseEntity<ItemDTO> getItemById(

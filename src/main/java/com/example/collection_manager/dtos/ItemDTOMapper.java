@@ -19,6 +19,11 @@ public class ItemDTOMapper {
                 .map(tagDTOMapper::toDTO)
                 .collect(Collectors.toList());
 
-        return new ItemDTO(item.getId(), item.getItemName(), item.getDescription(), tagDTOs);
+        List<ImageDTO> imageDTOs = item.getImages().stream()
+                .map(image -> new ImageDTO(image.getId(), image.getFileName(), image.getImageTitle()))
+                .collect(Collectors.toList());
+
+        return new ItemDTO(item.getId(), item.getItemName(), item.getDescription(), tagDTOs, imageDTOs);
     }
+
 }

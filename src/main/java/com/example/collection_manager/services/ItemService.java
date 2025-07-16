@@ -4,9 +4,11 @@ import com.example.collection_manager.dtos.ItemDTO;
 import com.example.collection_manager.dtos.ItemDTOMapper;
 import com.example.collection_manager.dtos.UpdateItemDTO;
 import com.example.collection_manager.models.Collection;
+import com.example.collection_manager.models.Image;
 import com.example.collection_manager.models.Item;
 import com.example.collection_manager.models.Tag;
 import com.example.collection_manager.repositories.CollectionRepository;
+import com.example.collection_manager.repositories.ImageRepository;
 import com.example.collection_manager.repositories.ItemRepository;
 import com.example.collection_manager.repositories.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,9 @@ public class ItemService {
 
     @Autowired
     private TagRepository tagRepository;
+
+    @Autowired
+    private ImageRepository imageRepository;
 
     public Item saveItem(Item item) {
         return itemRepository.save(item);
@@ -61,7 +66,7 @@ public class ItemService {
         return Optional.of(itemRepository.save(item));
     }
 
-    public Optional<Item> addItemToCollection(Long userId, Long collectionId, Item item, List<String> tagNames) {
+    public Optional<Item> addItemToCollection(Long userId, Long collectionId, Item item, List<String> tagNames, List<Long> imageIds) {
         Optional<Collection> collectionOpt = collectionRepository.findById(collectionId);
 
         if (collectionOpt.isEmpty() || !collectionOpt.get().getUser().getId().equals(userId)) {
@@ -74,6 +79,11 @@ public class ItemService {
         Set<String> safeTagNames = tagNames != null ? new HashSet<>(tagNames) : Collections.emptySet();
         List<Tag> resolvedTags = resolveTags(safeTagNames);
         item.setTags(new ArrayList<>(resolvedTags));
+
+        if (imageIds != null && !imageIds.isEmpty()) {
+            List<Image> images = imageRepository.findAllById(imageIds);
+            item.setImages(images);
+        }
 
         return Optional.of(itemRepository.save(item));
     }

@@ -16,16 +16,16 @@ public class Image {
     @ManyToMany(mappedBy = "images")
     private List<Item> items;
 
-    private String imageUrl;
+    private String fileName;
 
     private String imageTitle;
 
     public Image() {
     }
 
-    public Image(List<Item> items, String imageUrl, String imageTitle) {
+    public Image(List<Item> items, String fileName, String imageTitle) {
         this.items = items;
-        this.imageUrl = imageUrl;
+        this.fileName = fileName;
         this.imageTitle = imageTitle;
     }
 
@@ -45,12 +45,12 @@ public class Image {
         this.items = items;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getFileName() {
+        return fileName;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setFileName(String imageUrl) {
+        this.fileName = imageUrl;
     }
 
     public String getImageTitle() {

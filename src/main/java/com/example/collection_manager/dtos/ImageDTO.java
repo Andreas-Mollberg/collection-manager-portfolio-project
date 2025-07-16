@@ -1,4 +1,5 @@
 package com.example.collection_manager.dtos;
 
-public class ImageDTO {
+public record ImageDTO(Long id, String fileName, String imageTitle) {
 }
+
