@@ -22,6 +22,10 @@ public class Tag {
     public Tag() {
     }
 
+    public Tag(String tagName) {
+        this.tagName = tagName;
+    }
+
     public Tag(String tagName, List<Item> items) {
         this.tagName = tagName;
         this.items = items;

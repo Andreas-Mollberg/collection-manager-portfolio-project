@@ -1,5 +1,9 @@
 package com.example.collection_manager.dtos;
 
-public record CollectionDTO(Long id, String collectionTitle) {
+import com.example.collection_manager.enums.Visibility;
+
+import java.util.List;
+
+public record CollectionDTO(Long id, String collectionTitle, List<ItemDTO> items, Visibility visibility) {
 
 }

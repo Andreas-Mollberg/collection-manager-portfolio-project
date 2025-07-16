@@ -26,7 +26,6 @@ public class Item {
     @JoinColumn(name = "collection_id")
     private Collection collection;
 
-
     public Item(String itemName, String description, List<Tag> tags, List<Image> images) {
         this.itemName = itemName;
         this.description = description;
@@ -75,5 +74,13 @@ public class Item {
 
     public void setImages(List<Image> images) {
         this.images = images;
+    }
+
+    public Collection getCollection() {
+        return collection;
+    }
+
+    public void setCollection(Collection collection) {
+        this.collection = collection;
     }
 }

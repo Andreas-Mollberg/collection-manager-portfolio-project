@@ -1,5 +1,6 @@
 package com.example.collection_manager.models;
 
+import com.example.collection_manager.enums.Visibility;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -23,6 +24,10 @@ public class Collection {
 
     @OneToMany(mappedBy = "collection", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Item> items;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Visibility visibility = Visibility.PRIVATE;
 
     public Collection() {
     }
@@ -70,5 +75,13 @@ public class Collection {
 
     public void setItems(List<Item> items) {
         this.items = items;
+    }
+
+    public Visibility getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(Visibility visibility) {
+        this.visibility = visibility;
     }
 }

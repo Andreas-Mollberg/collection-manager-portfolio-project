@@ -1,4 +1,6 @@
 package com.example.collection_manager.dtos;
 
-public class ItemDTO {
+import java.util.List;
+
+public record ItemDTO (Long itemId, String itemName, String description, List<TagDTO> tags) {
 }

@@ -9,16 +9,29 @@ import java.util.stream.Collectors;
 @Component
 public class UserDTOMapper {
 
-    public UserDTO toDTO(User user) {
-        List<CollectionDTO> collectionDTOs = user.getCollections().stream()
-                .map(c -> new CollectionDTO(c.getId(), c.getCollectionTitle()))
-                .collect(Collectors.toList());
+    private final ItemDTOMapper itemDTOMapper;
 
-        return new UserDTO(
-                user.getId(),
-                user.getUserName(),
-                collectionDTOs
-        );
+    public UserDTOMapper(ItemDTOMapper itemDTOMapper) {
+        this.itemDTOMapper = itemDTOMapper;
     }
+
+    public UserDTO toDTO(User user) {
+        List<CollectionDTO> collectionDTOs =
+                user.getCollections() == null ? List.of() :
+                        user.getCollections().stream()
+                                .map(c -> new CollectionDTO(
+                                        c.getId(),
+                                        c.getCollectionTitle(),
+                                        c.getItems() == null ? List.of() :
+                                                c.getItems().stream()
+                                                        .map(itemDTOMapper::toDTO)
+                                                        .collect(Collectors.toList()),
+                                        c.getVisibility()
+                                ))
+                                .collect(Collectors.toList());
+
+        return new UserDTO(user.getId(), user.getUserName(), collectionDTOs);
+    }
+
 }
 
