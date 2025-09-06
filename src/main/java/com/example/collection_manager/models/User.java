@@ -1,8 +1,9 @@
 package com.example.collection_manager.models;
 
 import jakarta.persistence.*;
-
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class User {
@@ -11,25 +12,25 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String userName;
 
+    @Column(nullable = false)
     private String password;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Collection> collections;
+    private List<Collection> collections = new ArrayList<>();
 
     public User() {
     }
 
-    public User(String userName, String password, String email, List<Collection> collections) {
+    public User(String userName, String password, String email) {
         this.userName = userName;
         this.password = password;
         this.email = email;
-        this.collections = collections;
     }
 
     public Long getId() {
@@ -69,6 +70,28 @@ public class User {
     }
 
     public void setCollections(List<Collection> collections) {
-        this.collections = collections;
+        this.collections = collections != null ? collections : new ArrayList<>();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", userName='" + userName + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 }

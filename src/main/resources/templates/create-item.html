@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Create Item</title>
+
+    <link rel="stylesheet" th:href="@{/css/base.css}" />
+    <link rel="stylesheet" th:href="@{/css/forms.css}" />
+    <link rel="stylesheet" th:href="@{/css/cards.css}" />
+    <link rel="stylesheet" th:href="@{/css/nav.css}" />
+    <link rel="stylesheet" th:href="@{/css/footer.css}" />
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="page-container form-page">
+
+    <header class="page-header">
+        <h1>Create a New Item</h1>
+        <a class="back-link"
+           th:href="@{/collections/{collectionId}(collectionId=${collectionId})}">
+            ← Back to Collection
+        </a>
+    </header>
+
+    <section class="form-card">
+        <form class="form-grid"
+              th:action="@{/collections/{collectionId}/items/create(collectionId=${collectionId})}"
+              method="post"
+              enctype="multipart/form-data"
+              th:object="${form}">
+
+            <div class="form-field">
+                <label for="itemName">Item Name</label>
+                <input type="text" id="itemName" th:field="*{itemName}" required />
+            </div>
+
+            <div class="form-field">
+                <label for="description">Description</label>
+                <textarea id="description" th:field="*{description}" rows="5"></textarea>
+            </div>
+
+            <div class="form-field">
+                <label for="tagNames">Tags (comma-separated)</label>
+                <input type="text" id="tagNames" th:field="*{tagNames}" placeholder="gundam, model-kit, mg" />
+            </div>
+
+            <div class="form-field">
+                <label for="images">Upload Images</label>
+                <input type="file" id="images" th:field="*{images}" multiple />
+            </div>
+
+            <button type="submit" class="primary">Save Item</button>
+        </form>
+    </section>
+
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

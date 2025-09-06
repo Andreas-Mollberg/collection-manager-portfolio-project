@@ -1,0 +1,171 @@
+/* Base reset */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+img, video { max-width: 100%; height: auto; display: block; }
+
+/* Design tokens */
+:root{
+    --container-max: 1050px;
+
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+
+    --space-1: .25rem;
+    --space-2: .5rem;
+    --space-3: .75rem;
+    --space-4: 1rem;
+
+    --text: #111827;
+    --muted: #6b7280;
+
+    --btn-bg: #f3f4f6;
+    --btn-bg-hover: #e5e7eb;
+    --btn-border: #d1d5db;
+
+    --primary-bg: #ede9fe;
+    --primary-border: #c4b5fd;
+    --primary-text: #4c1d95;
+    --primary-bg-hover: #e0d7ff;
+
+    --danger-bg: #fee2e2;
+    --danger-border: #ef4444;
+    --danger-text: #b91c1c;
+    --danger-bg-hover: #fecaca;
+}
+
+/* Base typography/layout */
+body {
+    font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+main { flex: 1; }
+h1, h2 { color:#2c3e50; margin-top:1.5rem; }
+a { color:#3498db; text-decoration:none; }
+a:hover { text-decoration:underline; }
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1rem 0 1.5rem;
+}
+
+.empty-state {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: var(--radius-sm);
+    padding: 1.5rem;
+    text-align: center;
+}
+.empty-state p { margin: 0 0 0.75rem; }
+
+.muted { color: var(--muted); }
+.recent-list { list-style: none; padding-left: 0; margin: .5rem 0 0; }
+.recent-list li { margin: .25rem 0; }
+
+/* Unified button system */
+.btn,
+.btn:link,
+.btn:visited,
+button.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .375rem;
+    padding: 8px 14px;
+    min-height: 36px;
+    border: 1px solid var(--btn-border);
+    border-radius: var(--radius-sm);
+    background: var(--btn-bg);
+    color: var(--text);
+    font: inherit;
+    font-weight: 600;
+    text-decoration: none;
+    line-height: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+}
+.btn:hover,
+.btn:focus { text-decoration: none; }
+
+.btn-lg { padding: 10px 16px; min-height: 40px; }
+
+.btn-primary {
+    background: var(--primary-bg);
+    border-color: var(--primary-border);
+    color: var(--primary-text);
+}
+.btn-primary:hover { background: var(--primary-bg-hover); }
+
+.btn-secondary {
+    background: transparent;
+    border-color: #D0D5DD;
+    color: #344054;
+}
+.btn-secondary:hover { background: #F9FAFB; }
+
+.btn-danger {
+    background: var(--danger-bg);
+    border-color: var(--danger-border);
+    color: var(--danger-text);
+}
+.btn-danger:hover { background: var(--danger-bg-hover); }
+
+.btn-ghost-light {
+    background: transparent;
+    border-color: rgba(255,255,255,.45);
+    color: #fff;
+    padding: .45rem .95rem;
+    border-radius: 9999px;
+    font-weight: 700;
+}
+.btn-ghost-light:hover {
+    background: rgba(255,255,255,.10);
+    border-color: rgba(255,255,255,.65);
+}
+
+.desc {
+    --lines: 2;
+    position: relative;
+    margin: .25rem 0 0;
+    color: #475467;
+    line-height: 1.35;
+}
+.desc.clamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: var(--lines);
+    overflow: hidden;
+}
+.desc.clamp::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 1.6rem;
+    background: linear-gradient(to bottom, rgba(255,255,255,0), #fff 85%);
+    pointer-events: none;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+.desc.is-expanded { display: block; }
+.desc.is-expanded::after { display: none; }
+.desc.lines-2 { --lines: 2; }
+.desc.lines-3 { --lines: 3; }
+.desc.lines-4 { --lines: 4; }
+
+.desc-toggle {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: #7B3AED;
+    font-weight: 800;
+    padding: .25rem 0 0;
+    cursor: pointer;
+}
+.desc-toggle:hover { text-decoration: underline; }

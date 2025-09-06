@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${pageTitle != null ? pageTitle : 'My Collections'}">My Collections</title>
+
+    <link rel="stylesheet" th:href="@{/css/base.css}"/>
+    <link rel="stylesheet" th:href="@{/css/cards.css}"/>
+    <link rel="stylesheet" th:href="@{/css/nav.css}"/>
+    <link rel="stylesheet" th:href="@{/css/collections.css}"/>
+    <link rel="stylesheet" th:href="@{/css/footer.css}"/>
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="page-container collections-page">
+    <header class="page-header">
+        <h1 th:text="${pageTitle != null ? pageTitle : 'My Collections'}">My Collections</h1>
+
+        <nav class="tabs" th:if="${scope != null}">
+            <a th:href="@{/discover(scope='all')}"
+               th:classappend="${scope}=='all' ? 'active' : ''"
+               th:attr="aria-current=${scope}=='all' ? 'page' : null">All</a>
+
+            <a th:href="@{/discover(scope='public')}"
+               th:classappend="${scope}=='public' ? 'active' : ''"
+               th:attr="aria-current=${scope}=='public' ? 'page' : null">Public</a>
+
+            <a th:href="@{/discover(scope='friends')}"
+               th:classappend="${scope}=='friends' ? 'active' : ''"
+               th:attr="aria-current=${scope}=='friends' ? 'page' : null">Friends</a>
+
+            <a th:href="@{/collections/recent}"
+               th:classappend="${scope}=='recent' ? 'active' : ''"
+               th:attr="aria-current=${scope}=='recent' ? 'page' : null">Recent</a>
+        </nav>
+    </header>
+
+    <section class="empty-state"
+             th:if="${collections == null or collections.isEmpty()}">
+        <p th:switch="${scope}">
+            <span th:case="'recent'">No collections were posted or updated in the last 24 hours.</span>
+
+            <span th:case="'friends'">No friends’ collections to show right now.</span>
+
+            <span th:case="'public'">No public collections to show right now.</span>
+
+            <span th:case="'all'">Nothing to show here yet.</span>
+
+            <span th:case="*">You don’t have any collections yet.</span>
+        </p>
+
+        <p th:if="${scope == null}">
+            <a class="btn" th:href="@{/create-collection}">Create your first collection</a>
+        </p>
+    </section>
+
+    <section class="item-grid"
+             th:if="${collections != null and !collections.isEmpty()}">
+        <a class="collection-card"
+           th:each="c : ${collections}"
+           th:href="@{/collections/{id}(id=${c.id()})}">
+
+            <div class="collection-cover">
+                <img th:if="${c.coverImageUrl != null}"
+                     th:src="@{${c.coverImageUrl}}" alt="Cover"/>
+                <div th:unless="${c.coverImageUrl != null}" class="placeholder">No image</div>
+            </div>
+
+            <h3 class="collection-title" th:text="${c.collectionTitle()}">Collection Title</h3>
+
+            <div th:if="${c.description() != null and !#strings.isEmpty(c.description())}">
+                <div class="desc clamp lines-2 collection-desc" th:text="${c.description()}"></div>
+                <span class="desc-toggle" role="button" tabindex="0" aria-expanded="false">More</span>
+            </div>
+
+            <div class="collection-meta">
+                <span class="vis-pill"
+                      th:classappend="${
+                        c.visibility() == T(com.example.collection_manager.enums.Visibility).PUBLIC  ? ' is-public'  :
+                        (c.visibility() == T(com.example.collection_manager.enums.Visibility).FRIENDS ? ' is-friends' : ' is-private')
+                      }"
+                      th:text="${
+                        c.visibility() == T(com.example.collection_manager.enums.Visibility).PUBLIC  ? 'Public'  :
+                        (c.visibility() == T(com.example.collection_manager.enums.Visibility).FRIENDS ? 'Friends' : 'Private')
+                      }">
+                </span>
+            </div>
+
+        </a>
+    </section>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+    (function () {
+        function toggleDesc(desc, btn, expand) {
+            if (expand) {
+                desc.classList.remove('clamp');
+                desc.classList.add('is-expanded');
+                btn.textContent = 'Less';
+                btn.setAttribute('aria-expanded', 'true');
+            } else {
+                desc.classList.add('clamp');
+                desc.classList.remove('is-expanded');
+                btn.textContent = 'More';
+                btn.setAttribute('aria-expanded', 'false');
+            }
+        }
+
+        function shouldShowToggle(desc) {
+            const wasClamped = desc.classList.contains('clamp');
+            const clampedHeight = desc.clientHeight;
+            if (wasClamped) desc.classList.remove('clamp');
+            const fullHeight = desc.clientHeight;
+            if (wasClamped) desc.classList.add('clamp');
+            return fullHeight > clampedHeight + 1;
+        }
+
+        document.querySelectorAll('.desc').forEach(desc => {
+            const btn = desc.nextElementSibling;
+            const hasToggle = btn && btn.classList.contains('desc-toggle');
+            if (!shouldShowToggle(desc)) {
+                if (hasToggle) btn.remove();
+                desc.classList.remove('clamp');
+            }
+        });
+
+        document.addEventListener('click', function (e) {
+            const btn = e.target.closest('.desc-toggle');
+            if (!btn) return;
+            e.preventDefault();
+            e.stopPropagation();
+            const desc = btn.previousElementSibling;
+            const expand = !desc.classList.contains('is-expanded');
+            toggleDesc(desc, btn, expand);
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (!e.target.classList.contains('desc-toggle')) return;
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                e.stopPropagation();
+                const btn = e.target;
+                const desc = btn.previousElementSibling;
+                const expand = !desc.classList.contains('is-expanded');
+                toggleDesc(desc, btn, expand);
+            }
+        });
+    })();
+</script>
+</body>
+</html>

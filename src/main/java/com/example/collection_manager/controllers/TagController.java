@@ -2,22 +2,28 @@ package com.example.collection_manager.controllers;
 
 import com.example.collection_manager.models.Tag;
 import com.example.collection_manager.services.TagService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.net.URI;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/tags")
 public class TagController {
 
-    @Autowired
-    private TagService tagService;
+    private final TagService tagService;
+
+    public TagController(TagService tagService) {
+        this.tagService = tagService;
+    }
 
     @PostMapping
-    public ResponseEntity<Tag> createTag(@RequestBody Tag tag) {
+    public ResponseEntity<Tag> createTag(@Valid @RequestBody Tag tag) {
         Tag savedTag = tagService.createTag(tag);
-        return ResponseEntity.ok(savedTag);
+        URI location = URI.create("/api/tags/" + savedTag.getId());
+        return ResponseEntity.created(location).body(savedTag);
     }
 
     @GetMapping
@@ -28,6 +34,6 @@ public class TagController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTag(@PathVariable Long id) {
         boolean deleted = tagService.deleteTag(id);
-        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 }

@@ -10,140 +10,116 @@ import com.example.collection_manager.models.Tag;
 import com.example.collection_manager.repositories.CollectionRepository;
 import com.example.collection_manager.repositories.ImageRepository;
 import com.example.collection_manager.repositories.ItemRepository;
-import com.example.collection_manager.repositories.TagRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.*;
-import java.util.stream.Collectors;
+import org.springframework.transaction.annotation.Transactional;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ItemService {
 
-    @Autowired
-    private ItemRepository itemRepository;
+    private final ItemRepository itemRepository;
+    private final ItemDTOMapper itemDTOMapper;
+    private final CollectionRepository collectionRepository;
+    private final TagService tagService;
+    private final ImageService imageService;
+    private final ImageRepository imageRepository;
+    private final AuthorizationService authorizationService;
 
-    @Autowired
-    private ItemDTOMapper itemDTOMapper;
-
-    @Autowired
-    private CollectionRepository collectionRepository;
-
-    @Autowired
-    private TagRepository tagRepository;
-
-    @Autowired
-    private ImageRepository imageRepository;
-
-    public Item saveItem(Item item) {
-        return itemRepository.save(item);
+    public ItemService(ItemRepository itemRepository,
+                       ItemDTOMapper itemDTOMapper,
+                       CollectionRepository collectionRepository,
+                       TagService tagService,
+                       ImageService imageService,
+                       ImageRepository imageRepository,
+                       AuthorizationService authorizationService) {
+        this.itemRepository = itemRepository;
+        this.itemDTOMapper = itemDTOMapper;
+        this.collectionRepository = collectionRepository;
+        this.tagService = tagService;
+        this.imageService = imageService;
+        this.imageRepository = imageRepository;
+        this.authorizationService = authorizationService;
     }
 
-    public Optional<ItemDTO> findItemById(Long id) {
-        return itemRepository.findById(id)
-                .map(itemDTOMapper::toDTO);
-    }
-
-    public List<ItemDTO> findAllItems() {
-        return itemRepository.findAll()
-                .stream()
-                .map(itemDTOMapper::toDTO)
-                .collect(Collectors.toList());
-    }
-
+    @Transactional
     public Optional<Item> updateItem(Long itemId, UpdateItemDTO dto) {
-        Optional<Item> itemOpt = itemRepository.findById(itemId);
-        if (itemOpt.isEmpty()) return Optional.empty();
+        return itemRepository.findById(itemId).map(existing -> {
 
-        Item item = itemOpt.get();
-        if (dto.itemName() != null) item.setItemName(dto.itemName());
-        if (dto.description() != null) item.setDescription(dto.description());
-        if (dto.tags() != null) {
-            List<Tag> tags = resolveTags(new HashSet<>(dto.tags()));
-            item.setTags(tags);
-        }
+            existing.setItemName(dto.itemName());
+            existing.setDescription(dto.description());
 
+            List<Tag> updatedTags = tagService.findTagsByIds(dto.tagIds());
+            existing.getTags().clear();
+            existing.getTags().addAll(updatedTags);
 
-        return Optional.of(itemRepository.save(item));
+            List<Image> updatedImages = imageService.findImagesByIds(dto.imageIds());
+            List<Image> oldImages     = new ArrayList<>(existing.getImages()); // keep track of original
+
+            existing.getImages().clear();
+            existing.getImages().addAll(updatedImages);
+
+            Item saved = itemRepository.save(existing);
+
+            for (Image image : oldImages) {
+                if (!updatedImages.contains(image)) {
+                    imageService.deleteImageIfOrphaned(image);
+                }
+            }
+
+            return saved;
+        });
     }
 
-    public Optional<Item> addItemToCollection(Long userId, Long collectionId, Item item, List<String> tagNames, List<Long> imageIds) {
+    @Transactional
+    public Optional<Item> addItemToCollection(Long collectionId, Item item, List<Tag> tags, List<Image> images, Principal principal) {
         Optional<Collection> collectionOpt = collectionRepository.findById(collectionId);
+        if (collectionOpt.isEmpty()) return Optional.empty();
 
-        if (collectionOpt.isEmpty() || !collectionOpt.get().getUser().getId().equals(userId)) {
-            return Optional.empty();
-        }
+        if (!authorizationService.isOwnerOfCollection(collectionId, principal)) return Optional.empty();
 
         Collection collection = collectionOpt.get();
         item.setCollection(collection);
-
-        Set<String> safeTagNames = tagNames != null ? new HashSet<>(tagNames) : Collections.emptySet();
-        List<Tag> resolvedTags = resolveTags(safeTagNames);
-        item.setTags(new ArrayList<>(resolvedTags));
-
-        if (imageIds != null && !imageIds.isEmpty()) {
-            List<Image> images = imageRepository.findAllById(imageIds);
-            item.setImages(images);
-        }
+        item.setTags(tags != null ? new ArrayList<>(tags) : new ArrayList<>());
+        item.setImages(images != null ? new ArrayList<>(images) : new ArrayList<>());
 
         return Optional.of(itemRepository.save(item));
     }
 
-    private List<Tag> resolveTags(Set<String> tagNames) {
-        List<String> normalized = tagNames.stream()
-                .map(name -> name.trim().toLowerCase())
-                .distinct()
-                .toList();
-
-        List<Tag> existingTags = tagRepository.findAllByTagNameInIgnoreCase(normalized);
-
-        Map<String, Tag> existingTagMap = existingTags.stream()
-                .collect(Collectors.toMap(
-                        tag -> tag.getTagName().toLowerCase(),
-                        tag -> tag
-                ));
-
-        List<Tag> resolvedTags = new ArrayList<>();
-
-        for (String name : normalized) {
-            if (existingTagMap.containsKey(name)) {
-                resolvedTags.add(existingTagMap.get(name));
-            } else {
-                Tag newTag = new Tag(name);
-                tagRepository.save(newTag);
-                resolvedTags.add(newTag);
-            }
-        }
-
-        return resolvedTags;
-    }
-
-    public List<Item> findItemsByCollectionId(Long collectionId) {
-        return itemRepository.findByCollectionId(collectionId);
-    }
-
+    @Transactional(readOnly = true)
     public Optional<Item> findItemByIdInCollection(Long itemId, Long collectionId) {
         return itemRepository.findByIdAndCollectionId(itemId, collectionId);
     }
 
-    public Optional<Item> updateItemTags(Long userId, Long collectionId, Long itemId, List<Long> tagIds) {
+    @Transactional
+    public boolean deleteItemInCollection(Long itemId, Long collectionId) {
         Optional<Item> optionalItem = itemRepository.findByIdAndCollectionId(itemId, collectionId);
-
-        if (optionalItem.isEmpty()) return Optional.empty();
+        if (optionalItem.isEmpty()) return false;
 
         Item item = optionalItem.get();
 
-        if (!item.getCollection().getUser().getId().equals(userId)) return Optional.empty();
+        for (Image img : new ArrayList<>(item.getImages())) {
+            item.getImages().remove(img);
+            imageService.deleteImageIfOrphaned(img);
+        }
 
-        List<Tag> tags = tagRepository.findAllById(tagIds);
-        item.setTags(tags);
-
-        return Optional.of(itemRepository.save(item));
+        itemRepository.delete(item);
+        return true;
     }
 
-    public boolean deleteItemInCollection(Long itemId, Long collectionId) {
-        Optional<Item> item = findItemByIdInCollection(itemId, collectionId);
-        item.ifPresent(itemRepository::delete);
-        return item.isPresent();
+    @Transactional
+    public void removeImageFromItem(Long itemId, Long imageId) {
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new IllegalArgumentException("Item not found"));
+        Image image = imageRepository.findById(imageId)
+                .orElseThrow(() -> new IllegalArgumentException("Image not found"));
+
+        item.getImages().remove(image);
+        itemRepository.save(item);
+
+        imageService.deleteImageIfOrphaned(image);
     }
 
 }

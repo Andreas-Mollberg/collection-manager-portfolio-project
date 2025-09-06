@@ -1,0 +1,211 @@
+.create-collection .page-header{
+    max-width: 1050px;
+    margin: 1rem auto 1.25rem;
+    display: flex;
+    align-items: center;
+}
+.create-collection .page-header h1{
+    margin: 0;
+    font-weight: 800;
+    color: #2C2F6B;
+}
+
+.form-card{
+    max-width: 1050px;
+    margin: 0 auto 3rem;
+    background: #fff;
+    border: 1px solid #ECEEF3;
+    border-radius: 20px;
+    padding: 1.5rem;
+    box-shadow: 0 6px 22px rgba(24,32,56,0.06);
+}
+
+.stack-form .form-row{
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    margin-bottom: 1rem;
+}
+.stack-form label{ font-weight: 700; color: #2C2F6B; }
+.stack-form .muted{ color: #667085; }
+
+.stack-form input[type="text"],
+.stack-form textarea,
+.stack-form select{
+    width: 100%;
+    padding: .65rem .75rem;
+    border: 1px solid #D0D5DD;
+    border-radius: 10px;
+    font-size: 1rem;
+    background: #fff;
+}
+.stack-form textarea{ min-height: 120px; resize: vertical; }
+.stack-form .help{ margin: .25rem 0 0; font-size: .9rem; color: #667085; }
+
+.form-actions{
+    margin-top: 1rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: .75rem;
+}
+
+.btn.btn-secondary {
+    .btn.btn-secondary:hover {
+        background: #F9FAFB;
+    }
+
+    .auth-page {
+        min-height: calc(100vh - 140px);
+        display: grid;
+        place-items: start center;
+        padding: 2.5rem 1rem 3.5rem;
+    }
+
+    .auth-card {
+        width: 100%;
+        max-width: 420px;
+        background: #fff;
+        border: 1px solid #ECEEF3;
+        border-radius: 20px;
+        box-shadow: 0 6px 22px rgba(24, 32, 56, 0.06);
+        padding: 1.5rem;
+    }
+
+    @media (min-width: 520px) {
+        .auth-card {
+            padding: 2rem;
+        }
+    }
+
+    .auth-title {
+        margin: 0 0 1rem;
+        font-weight: 800;
+        color: #2C2F6B;
+    }
+
+    .vertical-form .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: .35rem;
+        margin: 0 0 .9rem;
+    }
+
+    .vertical-form input[type="text"],
+    .vertical-form input[type="password"],
+    .vertical-form input[type="email"] {
+        width: 100%;
+        padding: .7rem .8rem;
+        border: 1px solid #D0D5DD;
+        border-radius: 10px;
+        font-size: 1rem;
+        background: #fff;
+    }
+
+    .vertical-form input:focus {
+        outline: none;
+        border-color: #A4B0F5;
+        box-shadow: 0 0 0 3px rgba(71, 91, 239, .18);
+    }
+
+    .btn-block {
+        width: 100%;
+    }
+
+    .auth-msg {
+        margin: 0 0 .75rem;
+        font-weight: 700;
+        font-size: .95rem;
+    }
+
+    .auth-msg.error {
+        color: #B42318;
+    }
+
+    .auth-msg.success {
+        color: #027A48;
+    }
+
+    .form-page .page-header {
+        max-width: 1050px;
+        margin: 1rem auto 1.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+
+    .form-page .page-header h1 {
+        margin: 0;
+        font-weight: 800;
+        color: #2C2F6B;
+    }
+
+    .form-page .back-link {
+        font-weight: 800;
+        color: #2C2F6B;
+        text-decoration: none;
+    }
+
+    .form-page .back-link:hover {
+        text-decoration: underline;
+    }
+
+    .form-page .form-card {
+        max-width: 1050px;
+        margin: 0 auto 3rem;
+        border-radius: 20px;
+        border: 1px solid #ECEEF3;
+        background: #fff;
+        padding: 1.25rem;
+        box-shadow: 0 6px 22px rgba(24, 32, 56, 0.06);
+    }
+
+    .form-grid {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .form-field label {
+        display: block;
+        font-weight: 700;
+        color: #475467;
+        margin-bottom: .35rem;
+    }
+
+    .form-field input[type="text"],
+    .form-field textarea,
+    .form-field input[type="file"] {
+        width: 100%;
+        min-width: 0;
+        padding: .6rem .75rem;
+        border: 1px solid #D0D5DD;
+        border-radius: 8px;
+        font-size: 1rem;
+        background: #fff;
+    }
+
+    button.primary {
+        display: inline-block;
+        margin-top: .5rem;
+        background: #7B3AED;
+        color: #fff;
+        font-weight: 800;
+        border: 0;
+        border-radius: 10px;
+        padding: .7rem 1rem;
+        cursor: pointer;
+        box-shadow: 0 6px 18px rgba(123, 58, 237, .25);
+        transition: transform .15s ease, box-shadow .15s ease;
+    }
+
+    button.primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 24px rgba(123, 58, 237, .3);
+    }
+
+    @media (max-width: 680px) {
+        .form-page .form-card {
+            padding: 1rem;
+        }
+    }
+}

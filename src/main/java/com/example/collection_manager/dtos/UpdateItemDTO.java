@@ -2,8 +2,8 @@ package com.example.collection_manager.dtos;
 
 import java.util.List;
 
-public record UpdateItemDTO(String itemName, String description, List<String> tags, List<Long> imageIds) {
-
+public record UpdateItemDTO(String itemName, String description, List<Long> tagIds, List<Long> imageIds) {
 }
+
 
 

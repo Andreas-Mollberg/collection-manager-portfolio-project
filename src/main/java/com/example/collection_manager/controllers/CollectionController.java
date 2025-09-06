@@ -1,93 +1,139 @@
 package com.example.collection_manager.controllers;
 
-import com.example.collection_manager.dtos.CollectionDTO;
-import com.example.collection_manager.dtos.CollectionDTOMapper;
+import com.example.collection_manager.dtos.CollectionDetailDTO;
+import com.example.collection_manager.dtos.CollectionSummaryDTO;
 import com.example.collection_manager.dtos.CreateCollectionDTO;
-import com.example.collection_manager.models.Collection;
+import com.example.collection_manager.dtos.UpdateCollectionDTO;
+import com.example.collection_manager.services.AuthorizationService;
 import com.example.collection_manager.services.CollectionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
+import java.net.URI;
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
+@Validated
 @RestController
 @RequestMapping("/api/users/{userId}/collections")
 public class CollectionController {
 
-    @Autowired
-    private CollectionService collectionService;
+    private final CollectionService collectionService;
+    private final AuthorizationService authorizationService;
 
-    @Autowired
-    private CollectionDTOMapper collectionDTOMapper;
+    public CollectionController(CollectionService collectionService, AuthorizationService authorizationService) {
+        this.collectionService = collectionService;
+        this.authorizationService = authorizationService;
+    }
 
     @PostMapping
-    public ResponseEntity<CollectionDTO> createCollection(
+    public ResponseEntity<CollectionDetailDTO> createCollection(
             @PathVariable Long userId,
-            @RequestBody CreateCollectionDTO dto) {
+            @Valid @RequestBody CreateCollectionDTO dto,
+            Principal principal) {
+
+        if (!authorizationService.isSameUser(userId, principal)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         return collectionService.createCollectionForUser(userId, dto)
-                .map(saved -> ResponseEntity.ok(collectionDTOMapper.toDTO(saved)))
+                .map(c -> {
+                    Optional<CollectionDetailDTO> body = collectionService.getCollectionById(c.getId());
+                    URI location = URI.create("/api/users/" + userId + "/collections/" + c.getId());
+                    return body.map(collection -> ResponseEntity.created(location).body(collection))
+                            .orElseGet(() -> ResponseEntity.created(location).build());
+                })
                 .orElse(ResponseEntity.notFound().build());
     }
 
-
     @GetMapping
-    public List<CollectionDTO> getCollections(@PathVariable Long userId) {
-        return collectionService.getCollectionsByUserId(userId)
-                .stream()
-                .map(collectionDTOMapper::toDTO)
-                .toList();
+    public ResponseEntity<List<CollectionSummaryDTO>> getCollections(
+            @PathVariable Long userId,
+            Principal principal) {
+
+        if (!authorizationService.isSameUser(userId, principal)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return ResponseEntity.ok(collectionService.getCollectionsByUserId(userId));
     }
 
     @GetMapping("/{collectionId}")
-    public ResponseEntity<CollectionDTO> getCollectionById(
+    public ResponseEntity<CollectionDetailDTO> getCollectionById(
             @PathVariable Long userId,
             @PathVariable Long collectionId,
-            @RequestParam(name = "viewerId", required = false) Long viewerId
-    ) {
-        Optional<Collection> collectionOpt = collectionService.getCollectionById(collectionId);
+            Principal principal) {
 
-        if (collectionOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
+        Optional<CollectionDetailDTO> opt = collectionService.getCollectionById(collectionId);
+        if (opt.isEmpty()) return ResponseEntity.notFound().build();
+
+        CollectionDetailDTO dto = opt.get();
+        String username = (principal != null) ? principal.getName() : null;
+
+        boolean isOwner = (username != null) && username.equals(dto.ownerName());
+        boolean isPublic = dto.visibility() == com.example.collection_manager.enums.Visibility.PUBLIC;
+        boolean isFriendVisible = dto.visibility() == com.example.collection_manager.enums.Visibility.FRIENDS
+                && authorizationService.isFriendsWith(dto.ownerId(), principal);
+
+        if (isOwner || isPublic || isFriendVisible) {
+            return ResponseEntity.ok(dto);
         }
 
-        Collection collection = collectionOpt.get();
-
-        boolean isOwner = viewerId != null && viewerId.equals(collection.getUser().getId());
-
-        switch (collection.getVisibility()) {
-            case PUBLIC -> { return ResponseEntity.ok(collectionDTOMapper .toDTO(collection)); }
-            case PRIVATE, FRIENDS -> {
-                if (isOwner) {
-                    return ResponseEntity.ok(collectionDTOMapper .toDTO(collection));
-                } else {
-                    return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-                }
-            }
-            default -> {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            }
-        }
+        // Not allowed: hide existence
+        return ResponseEntity.notFound().build();
     }
-
-    @GetMapping("/public")
-    public List<CollectionDTO> getPublicCollections(
-            @PathVariable Long userId
-    ) {
-        return collectionService.getPublicCollectionsByUserId(userId)
-                .stream()
-                .map(collectionDTOMapper::toDTO)
-                .toList();
-    }
-
 
     @DeleteMapping("/{collectionId}")
     public ResponseEntity<Void> deleteCollection(
             @PathVariable Long userId,
-            @PathVariable Long collectionId) {
-        boolean deleted = collectionService.deleteCollection(collectionId);
+            @PathVariable Long collectionId,
+            Principal principal) {
+
+        if (!authorizationService.isOwnerOfCollection(collectionId, principal)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        if (findIfPathOwnerMatches(userId, collectionId).isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        boolean deleted = collectionService.deleteCollection(collectionId, principal);
         return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/{collectionId}")
+    public ResponseEntity<Void> updateCollection(
+            @PathVariable Long userId,
+            @PathVariable Long collectionId,
+            @Valid @RequestBody UpdateCollectionDTO dto,
+            Principal principal) {
+
+        if (!authorizationService.isOwnerOfCollection(collectionId, principal)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        if (findIfPathOwnerMatches(userId, collectionId).isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        boolean updated = collectionService.updateCollection(
+                collectionId, dto.collectionTitle(), dto.visibility(), dto.description(), principal);
+
+        return updated ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/public")
+    public List<CollectionSummaryDTO> getAllPublicCollections() {
+        return collectionService.getAllPublicCollections();
+    }
+
+    private Optional<CollectionDetailDTO> findIfPathOwnerMatches(Long userId, Long collectionId) {
+        Optional<CollectionDetailDTO> opt = collectionService.getCollectionById(collectionId);
+        if (opt.isPresent() && userId.equals(opt.get().ownerId())) {
+            return opt;
+        }
+        return Optional.empty();
     }
 }

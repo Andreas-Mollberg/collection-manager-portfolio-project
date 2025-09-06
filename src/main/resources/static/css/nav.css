@@ -1,0 +1,93 @@
+:root{
+    --navbar-max: 1050px;
+    --navbar-pad-x: 2rem;
+}
+
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: linear-gradient(90deg, #475BEF 0%, #7B3AED 100%);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(16,24,40,.15);
+}
+
+.navbar .container {
+    max-width: var(--navbar-max);
+    margin: 0 auto;
+    padding: 0 var(--navbar-pad-x);
+    min-height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.navbar .nav-left,
+.navbar .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+.navbar .nav-right { margin-left: auto; white-space: nowrap; }
+
+.navbar .nav-right .btn,
+.navbar .nav-right button {
+    border: 1px solid rgba(255,255,255,.45);
+    background-color: rgba(255,255,255,.12);
+    color: #fff;
+    padding: .45rem .95rem;
+    border-radius: 9999px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color .2s ease, border-color .2s ease, color .2s ease;
+}
+
+.navbar .nav-right .btn:hover,
+.navbar .nav-right button:hover {
+    background-color: rgba(255,255,255,.22);
+    border-color: rgba(255,255,255,.65);
+    color: #fff;
+    text-decoration: none;
+}
+
+.navbar a:hover:not(.btn) {
+    color: #fff;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.navbar a {
+    color: #F8FAFC;
+    text-decoration: none;
+    font-weight: 700;
+    letter-spacing: .2px;
+    transition: color .2s ease, opacity .2s ease;
+}
+.navbar a:hover { color: #fff; text-decoration: underline; text-underline-offset: 4px; }
+.navbar a[aria-current="page"],
+.navbar a.active { text-decoration: underline; text-underline-offset: 6px; }
+
+.navbar form {
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0;
+    border: 0;
+    box-shadow: none !important;
+    display: inline;
+}
+
+.navbar a:focus-visible,
+.navbar button:focus-visible {
+    outline: 2px solid rgba(255,255,255,.85);
+    outline-offset: 2px;
+    border-radius: 9999px;
+}
+
+
+
+@media (max-width: 680px) {
+    .navbar .container { min-height: 56px; padding: 10px 16px; }
+    .navbar .nav-left { gap: .9rem; flex-wrap: wrap; }
+}

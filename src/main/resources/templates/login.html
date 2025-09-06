@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Login</title>
+
+    <link rel="stylesheet" th:href="@{/css/base.css}"/>
+    <link rel="stylesheet" th:href="@{/css/forms.css}"/>
+    <link rel="stylesheet" th:href="@{/css/cards.css}"/>
+    <link rel="stylesheet" th:href="@{/css/nav.css}"/>
+    <link rel="stylesheet" th:href="@{/css/footer.css}"/>
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="page-container auth-page">
+    <section class="auth-card">
+        <h1 class="auth-title">Log in</h1>
+
+        <p class="auth-msg error" th:if="${param.error}">Invalid username or password.</p>
+        <p class="auth-msg success" th:if="${param.logout}">You have been logged out.</p>
+
+        <form class="vertical-form"
+              th:action="@{/login}" method="post" autocomplete="on">
+            <div class="form-field">
+                <label for="username">Username</label>
+                <input id="username"
+                       type="text"
+                       name="username"
+                       autocomplete="username"
+                       required autofocus/>
+            </div>
+
+            <div class="form-field">
+                <label for="password">Password</label>
+                <input id="password"
+                       type="password"
+                       name="password"
+                       autocomplete="current-password"
+                       required/>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Login</button>
+        </form>
+    </section>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

@@ -2,8 +2,9 @@ package com.example.collection_manager.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Tag {
@@ -12,23 +13,18 @@ public class Tag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String tagName;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "tags")
-    private List<Item> items;
+    private List<Item> items = new ArrayList<>();
 
     public Tag() {
     }
 
     public Tag(String tagName) {
         this.tagName = tagName;
-    }
-
-    public Tag(String tagName, List<Item> items) {
-        this.tagName = tagName;
-        this.items = items;
     }
 
     public Long getId() {
@@ -52,6 +48,27 @@ public class Tag {
     }
 
     public void setItems(List<Item> items) {
-        this.items = items;
+        this.items = items != null ? items : new ArrayList<>();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Tag tag = (Tag) o;
+        return Objects.equals(id, tag.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Tag{" +
+                "id=" + id +
+                ", tagName='" + tagName + '\'' +
+                '}';
     }
 }

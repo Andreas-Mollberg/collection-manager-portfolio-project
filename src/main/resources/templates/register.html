@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Register</title>
+
+    <link rel="stylesheet" th:href="@{/css/base.css}"/>
+    <link rel="stylesheet" th:href="@{/css/nav.css}"/>
+    <link rel="stylesheet" th:href="@{/css/forms.css}"/>
+    <link rel="stylesheet" th:href="@{/css/cards.css}"/>
+    <link rel="stylesheet" th:href="@{/css/footer.css}"/>
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="page-container auth-page">
+    <section class="auth-card">
+        <h1 class="auth-title">Create an account</h1>
+
+        <p id="errorMessage" class="auth-msg error" role="alert" aria-live="polite" hidden></p>
+        <p id="successMessage" class="auth-msg success" role="status" aria-live="polite" hidden></p>
+
+        <form id="registerForm" class="vertical-form" novalidate>
+            <div class="form-field">
+                <label for="userName">Username</label>
+                <input id="userName" name="userName" type="text" autocomplete="username" required />
+            </div>
+
+            <div class="form-field">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" inputmode="email" autocomplete="email" required />
+            </div>
+
+            <div class="form-field">
+                <label for="password">Password</label>
+                <input id="password" name="password" type="password" autocomplete="new-password" minlength="6" required />
+            </div>
+
+            <button id="registerBtn" type="submit" class="btn btn-primary btn-block">Create account</button>
+        </form>
+
+        <p class="muted" style="text-align:center;margin-top:.75rem;">
+            Already have an account? <a th:href="@{/login}">Log in</a>
+        </p>
+    </section>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+    (function () {
+        const form = document.getElementById('registerForm');
+        const btn  = document.getElementById('registerBtn');
+        const err  = document.getElementById('errorMessage');
+        const ok   = document.getElementById('successMessage');
+
+        function show(el, message) {
+            el.textContent = message || '';
+            el.hidden = !message;
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            show(err, ''); show(ok, '');
+
+            if (!form.reportValidity()) return;
+
+            const payload = {
+                userName: form.userName.value.trim(),
+                email:    form.email.value.trim(),
+                password: form.password.value
+            };
+
+            btn.disabled = true;
+            const prev = btn.textContent;
+            btn.textContent = 'Creating…';
+
+            try {
+                const res = await fetch('/api/users/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.status === 409) {
+                    let data; try { data = await res.json(); } catch {}
+                    const msg = (data && (data.message || data.error)) || 'Email or username is already registered.';
+                    show(err, msg);
+                    btn.disabled = false; btn.textContent = prev;
+                    return;
+                }
+
+                if (!res.ok) {
+                    let data; try { data = await res.json(); } catch {}
+                    throw new Error((data && (data.message || data.error)) || 'Registration failed.');
+                }
+
+                show(ok, 'Registration successful! Redirecting to login…');
+                setTimeout(() => { window.location.href = '/login'; }, 1200);
+            } catch (ex) {
+                show(err, ex.message || 'An error occurred. Please try again.');
+                btn.disabled = false; btn.textContent = prev;
+            }
+        });
+    })();
+</script>
+</body>
+</html>

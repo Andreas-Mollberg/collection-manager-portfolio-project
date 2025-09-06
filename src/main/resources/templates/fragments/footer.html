@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<footer class="site-footer" th:fragment="footer">
+    <div class="container">
+    <span class="ft-copy"
+          th:text="'© ' + ${#dates.format(#dates.createNow(), 'yyyy')} + ' Placeholder'">
+      © 2025 Placeholder
+    </span>
+    </div>
+</footer>
+</body>
+</html>

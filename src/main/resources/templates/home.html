@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Home</title>
+    <link rel="stylesheet" th:href="@{/css/base.css}"/>
+    <link rel="stylesheet" th:href="@{/css/cards.css}"/>
+    <link rel="stylesheet" th:href="@{/css/nav.css}"/>
+    <link rel="stylesheet" th:href="@{/css/home.css}"/>
+    <link rel="stylesheet" th:href="@{/css/footer.css}"/>
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="page-container home">
+    <section class="hero">
+        <h1>
+            Welcome back,
+            <span th:text="${userName != null ? userName : 'User'}">User</span>!
+        </h1>
+        <p>
+            Here you can <strong>manage your collections</strong>,
+            <strong>add new items</strong>, and <strong>explore</strong>
+            what others have shared.
+        </p>
+    </section>
+
+    <section class="kpi-grid" aria-label="Your stats">
+        <a class="kpi-card kpi-link"
+           th:href="@{/discover(scope='public')}"
+           aria-label="Browse collections">
+            <div class="kpi-value" th:text="${collectionCount != null ? collectionCount : 0}">0</div>
+            <div class="kpi-label">Total Collections</div>
+        </a>
+
+        <a class="kpi-card kpi-link"
+           th:href="@{/collections/recent}"
+           aria-label="View all recent collections">
+            <div class="kpi-value" th:text="${recentCount != null ? recentCount : 0}">0</div>
+            <div class="kpi-label">Recently Updated</div>
+        </a>
+
+        <a class="kpi-card kpi-link"
+           th:href="@{/friends}"
+           aria-label="Open friends">
+            <div class="kpi-value" th:text="${friendCount != null ? friendCount : 0}">0</div>
+            <div class="kpi-label">Friends</div>
+        </a>
+    </section>
+
+</main>
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
