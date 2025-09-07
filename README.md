@@ -13,31 +13,54 @@ A Spring Boot + Thymeleaf web app for organizing your collections and sharing th
 - Authentication (register/login/logout) via Spring Security
 - Modern, clean UI with cohesive layout and design
 
-
 ## Screenshots
 
-<div align="center">
-  <img src="screenshots/home.png" alt="Home page" width="900">
-</div>
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <a href="screenshots/home.png?raw=1">
+        <img src="screenshots/home.png" width="420" alt="Home">
+      </a><br>
+      <sub><b>Home</b></sub>
+    </td>
+    <td align="center" width="50%">
+      <a href="screenshots/collections-grid.png?raw=1">
+        <img src="screenshots/collections-grid.png" width="420" alt="Collections grid">
+      </a><br>
+      <sub><b>Collections grid</b></sub>
+    </td>
+  </tr>
 
-<div align="center">
-  <img src="screenshots/collections-grid.png" alt="Collections grid" width="900">
-</div>
+  <tr>
+    <td align="center" width="50%">
+      <a href="screenshots/collection.png?raw=1">
+        <img src="screenshots/collection.png" width="420" alt="Collection">
+      </a><br>
+      <sub><b>Collection</b></sub>
+    </td>
+    <td align="center" width="50%">
+      <a href="screenshots/item.png?raw=1">
+        <img src="screenshots/item.png" width="420" alt="Item">
+      </a><br>
+      <sub><b>Item</b></sub>
+    </td>
+  </tr>
 
-<div align="center">
-  <img src="screenshots/collection.png" alt="Single collection" width="900">
-</div>
-
-<div align="center">
-  <img src="screenshots/item.png" alt="Item in collection" width="900">
-</div>
-
-<div align="center">
-  <img src="screenshots/login.png" alt="Login page" width="900">
-</div>
-
-
-
+  <tr>
+    <td align="center" width="50%">
+      <a href="screenshots/login.png?raw=1">
+        <img src="screenshots/login.png" width="420" alt="Login">
+      </a><br>
+      <sub><b>Login</b></sub>
+    </td>
+    <td align="center" width="50%">
+      <a href="screenshots/create-item.png?raw=1">
+        <img src="screenshots/create-item.png" width="420" alt="Create item form">
+      </a><br>
+      <sub><b>Create item form</b></sub>
+    </td>
+  </tr>
+</table>
 
 
 ## Tech Stack
