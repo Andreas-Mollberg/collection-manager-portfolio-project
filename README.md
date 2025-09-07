@@ -207,4 +207,4 @@ The aim of this portfolio project is to demonstrate:
 - Authentication/authorization with Spring Security
 
 - Relational modeling with JPA
-```
+
