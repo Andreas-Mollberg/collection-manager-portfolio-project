@@ -18,13 +18,13 @@ A Spring Boot + Thymeleaf web app for organizing your collections and sharing th
 <table>
   <tr>
     <td align="center" width="50%">
-      <a href="screenshots/home.png?raw=1">
+      <a href="screenshots/home.png">
         <img src="screenshots/home.png" width="420" alt="Home">
       </a><br>
       <sub><b>Home</b></sub>
     </td>
     <td align="center" width="50%">
-      <a href="screenshots/collections-grid.png?raw=1">
+      <a href="screenshots/collections-grid.png">
         <img src="screenshots/collections-grid.png" width="420" alt="Collections grid">
       </a><br>
       <sub><b>Collections grid</b></sub>
@@ -33,13 +33,13 @@ A Spring Boot + Thymeleaf web app for organizing your collections and sharing th
 
   <tr>
     <td align="center" width="50%">
-      <a href="screenshots/collection.png?raw=1">
+      <a href="screenshots/collection.png">
         <img src="screenshots/collection.png" width="420" alt="Collection">
       </a><br>
       <sub><b>Collection</b></sub>
     </td>
     <td align="center" width="50%">
-      <a href="screenshots/item.png?raw=1">
+      <a href="screenshots/item.png">
         <img src="screenshots/item.png" width="420" alt="Item">
       </a><br>
       <sub><b>Item</b></sub>
@@ -48,13 +48,13 @@ A Spring Boot + Thymeleaf web app for organizing your collections and sharing th
 
   <tr>
     <td align="center" width="50%">
-      <a href="screenshots/login.png?raw=1">
+      <a href="screenshots/login.png">
         <img src="screenshots/login.png" width="420" alt="Login">
       </a><br>
       <sub><b>Login</b></sub>
     </td>
     <td align="center" width="50%">
-      <a href="screenshots/create-item.png?raw=1">
+      <a href="screenshots/create-item.png">
         <img src="screenshots/create-item.png" width="420" alt="Create item form">
       </a><br>
       <sub><b>Create item form</b></sub>
