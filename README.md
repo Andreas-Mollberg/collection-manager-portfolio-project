@@ -2,7 +2,7 @@
 
 A Spring Boot + Thymeleaf web app for organizing your collections and sharing them with others.
 
-> Run locally and sign up with the built-in registration page. See **Getting Started**.
+> Run locally and sign up with the built-in registration page. See **[Getting Started](#getting-started)**.
 
 ## Features
 
