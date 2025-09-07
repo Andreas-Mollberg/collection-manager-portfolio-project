@@ -17,23 +17,23 @@ A Spring Boot + Thymeleaf web app for organizing your collections and sharing th
 ## Screenshots
 
 <div align="center">
-  <img src="screenshot/home.png" alt="Home page" width="900">
+  <img src="screenshots/home.png" alt="Home page" width="900">
 </div>
 
 <div align="center">
-  <img src="screenshot/collections-grid.png" alt="Collections grid" width="900">
+  <img src="screenshots/collections-grid.png" alt="Collections grid" width="900">
 </div>
 
 <div align="center">
-  <img src="screenshot/collection.png" alt="Single collection" width="900">
+  <img src="screenshots/collection.png" alt="Single collection" width="900">
 </div>
 
 <div align="center">
-  <img src="screenshot/item.png" alt="Item in collection" width="900">
+  <img src="screenshots/item.png" alt="Item in collection" width="900">
 </div>
 
 <div align="center">
-  <img src="screenshot/login.png" alt="Login page" width="900">
+  <img src="screenshots/login.png" alt="Login page" width="900">
 </div>
 
 
