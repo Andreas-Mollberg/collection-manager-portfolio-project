@@ -32,13 +32,4 @@ build/
 ### VS Code ###
 .vscode/
 src/main/resources/application.properties
-src/main/resources/static/uploads/images/019255fe-f8d7-40f0-ae11-504896d93d60_58c9365d2001a.jpg
-src/main/resources/static/uploads/images/612483f9-a2a3-4c86-b5c4-07939ecc5350_58c9365d2001a.jpg
-src/main/resources/static/uploads/images/706d6332-fc1e-4fe9-ae4c-a8020be6deb6_board-361516_640.jpg
-src/main/resources/static/uploads/images/85479163-b4cd-4417-aad3-453f294fa61a_https___hypebeast.com_image_2020_11_GUNPLA-EXPO-TOKYO-2020-Gundam-models-figures-21.avif
-src/main/resources/static/uploads/images/d8ef6f85-4163-4e56-abde-b9bca30a4cfd_board-361516_640.jpg
-src/main/resources/static/uploads/images/ef87171f-8b72-4a03-a34e-f61e23028eb7_S4db4fde04bcb4adeb70049bb207f6274v.jpg_640x640q75.jpg_.avif
-src/main/resources/static/uploads/images/f70d3896-4c18-46cb-be0b-9b6e6ac6d21e_first-time-trying-to-take-some-proper-photos-of-a-kit-v0-bg8rr0xrl4xb1.webp
-src/main/resources/application.properties
-src/main/resources/static/uploads/images/019255fe-f8d7-40f0-ae11-504896d93d60_58c9365d2001a.jpg
-src/main/resources/application.properties
+
